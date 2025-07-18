@@ -1,0 +1,302 @@
+# TODO: at some point min / max (date, bed, bath, price)
+
+import argparse
+
+from tabulate import tabulate
+
+from rtb_scraper.register import register
+from rtb_scraper.tribunal import tribunals
+from rtb_scraper.determination import determinations
+
+from irish_property_analysis.settings import PPR_LOCATION
+from irish_property_analysis.utils import (
+    get_all_historical_listings,
+    get_shares,
+    get_rentals,
+    clean_address_for_comparison,
+    minimize_str,
+    none_to_str,
+)
+from irish_property_analysis.ppr_sale import Sales
+
+
+def for_print_tabulate(objects, truncate=False):
+    if not objects:
+        print("Nothing to show...")
+        return
+
+    keys = list(objects[0].keys())
+    keys_to_remove = []
+    for key in keys:
+        if all(not obj.get(key) for obj in objects):
+            keys_to_remove.append(key)
+
+    if keys_to_remove:
+        print(f"Removing keys: {keys_to_remove} as they are all empty")
+
+    filtered_objects = [
+        {k: v for k, v in obj.items() if k not in keys_to_remove} for obj in objects
+    ]
+
+    # Don't want price in scientific notation so put to str
+    for obj in filtered_objects:
+        if "price" in obj:
+            obj["price"] = f"{obj['price']:,.0f}"
+
+    return tabulate(
+        [
+            list(
+                [
+                    minimize_str(none_to_str(o)) if truncate else none_to_str(o)
+                    for o in obj.values()
+                ]
+            )
+            for obj in filtered_objects
+        ],
+        headers=list(filtered_objects[0].keys()) if filtered_objects else [],
+        tablefmt="fancy_grid",
+    )
+
+
+def address_substr_csv(value: str):
+    return (
+        [clean_address_for_comparison(addr).lower() for addr in value.split(",")]
+        if value
+        else []
+    )
+
+
+def print_ppr(args):
+    ppr_sales = Sales.load(PPR_LOCATION)
+
+    ppr_results = []
+    for address_substr in args.address_substr_csv:
+        # TODO: add feature to have a list of address substrings
+        ppr_results = ppr_sales.filter(
+            address=address_substr, county=args.county, partial=True
+        )
+
+    final_ppr_results = []
+    for ppr_item in ppr_results:
+        if all(
+            [
+                i in clean_address_for_comparison(ppr_item.address)
+                for i in args.address_substr_csv
+            ]
+        ):
+            # TODO: also don't merge by date since can be sold multiple times
+            if ppr_item.address not in [d.address for d in final_ppr_results]:
+                final_ppr_results.append(ppr_item)
+
+    print("\nPPR:")
+    print(
+        for_print_tabulate(
+            [i.serialise() for i in final_ppr_results], truncate=not args.all
+        )
+    )
+
+
+def passes_listing_filter(args, listing):
+    if args.county:
+        if not listing["county"] == args.county:
+            return False
+
+    if args.address_substr_csv:
+        if not all(
+            [
+                i in clean_address_for_comparison(listing["original_address"])
+                for i in args.address_substr_csv
+            ]
+        ):
+            return False
+
+    return True
+
+
+def serialise_listing_for_print(listing: dict) -> dict:
+    del listing["_id"]
+    del listing["clean_address"]
+    listing["lat"] = listing["location"]["coordinates"][1]
+    listing["lng"] = listing["location"]["coordinates"][0]
+    del listing["location"]
+    return listing
+
+
+def print_listing_sales(args):
+    objects = []
+
+    print("\nHistorical listing sales:")
+    for listing in get_all_historical_listings():
+        listing_data = serialise_listing_for_print(listing)
+        if listing_data in objects:
+            continue
+        if passes_listing_filter(args, listing):
+            objects.append(listing_data)
+
+    print(for_print_tabulate(objects, truncate=not args.all))
+
+
+def print_listing_shares(args):
+    objects = []
+
+    print("\nHistorical listing shares:")
+    for listing in get_shares():
+        listing_data = serialise_listing_for_print(listing)
+        if listing_data in objects:
+            continue
+        if passes_listing_filter(args, listing):
+            objects.append(listing_data)
+
+    print(for_print_tabulate(objects, truncate=not args.all))
+
+
+def print_listing_rentals(args):
+    objects = []
+
+    print("\nHistorical listing rentals:")
+    for listing in get_rentals():
+        listing_data = serialise_listing_for_print(listing)
+        if listing_data in objects:
+            continue
+        if passes_listing_filter(args, listing):
+            objects.append(listing_data)
+
+    print(for_print_tabulate(objects, truncate=not args.all))
+
+
+def print_rtb_registrations(args):
+    register_accum = []
+
+    for address_substr in args.address_substr_csv:
+        register_results = register.filter(address=address_substr, partial=True)
+        register_accum.extend(register_results)
+
+    register_results = []
+    for register_item in register_accum:
+        if (
+            all([i in register_item.address.lower() for i in args.address_substr_csv])
+            and (args.county in register_item.address.lower() if args.county else True)
+            and register_item not in register_results
+        ):
+            if register_item.eircode in [
+                r.eircode for r in register_results
+            ] and register_item.month_seen in [r.month_seen for r in register_results]:
+                pass
+            else:
+                register_results.append(register_item)
+
+    print("\nRTB register results:")
+    print(
+        for_print_tabulate(
+            [d.__data__ for d in register_results], truncate=not args.all
+        )
+    )
+
+
+def print_rtb_determinations(args):
+    determination_accum = []
+
+    for address_substr in args.address_substr_csv:
+        # TODO: add feature to have a list of address substrings
+        determination_accum.extend(
+            determinations.filter(address=address_substr, partial=True)
+        )
+
+    determination_results = []
+    for determination_item in determination_accum:
+        if (
+            all(
+                [
+                    i in determination_item.address.lower()
+                    for i in args.address_substr_csv
+                ]
+            )
+            and (
+                args.county in determination_item.address.lower()
+                if args.county
+                else True
+            )
+            and determination_item not in determination_results
+        ):
+            determination_results.append(determination_item)
+
+    print("\nRTB determination results:")
+    print(
+        for_print_tabulate(
+            [d.__data__ for d in determination_results], truncate=not args.all
+        )
+    )
+
+
+def print_rtb_tribunals(args):
+
+    tribunal_accum = []
+
+    for address_substr in args.address_substr_csv:
+        # TODO: add feature to have a list of address substrings
+        tribunal_accum.extend(tribunals.filter(address=address_substr, partial=True))
+
+    tribunal_results = []
+    for tribunal_item in tribunal_accum:
+        if (
+            all([i in tribunal_item.address.lower() for i in args.address_substr_csv])
+            and (args.county in tribunal_item.address.lower() if args.county else True)
+            and tribunal_item not in tribunal_results
+        ):
+            if tribunal_item.tribunal_ref_no not in [
+                d.tribunal_ref_no for d in tribunal_results
+            ]:
+                tribunal_results.append(tribunal_item)
+
+    print("\nRTB tribunal results:")
+    print(
+        for_print_tabulate(
+            [d.__data__ for d in tribunal_results], truncate=not args.all
+        )
+    )
+
+
+def main():
+
+    parser = argparse.ArgumentParser(
+        description="Get all available details about an address"
+    )
+    parser.add_argument(
+        "--address-substr-csv",
+        dest="address_substr_csv",
+        type=address_substr_csv,
+        help="CSV values of address substrings that must be within the found address (e.g. '13,dublin,grand canal')",
+        default=[],
+    )
+    parser.add_argument("--county", type=str, help="County to search in")
+    parser.add_argument(
+        "--all", action="store_true", help="Don't truncate long strings"
+    )
+
+    # TODO
+    # parser.add_argument(
+    #    "--exclude-address-substr-csv",
+    #    dest="exclude_address_substr_csv",
+    #    type=address_substr_csv,
+    #    help="CSV values of address substrings that must not be within the found address (e.g. '13,dublin,grand canal')",
+    #    default=[],
+    # )
+    # parser.add_argument(
+    #    "--eircode", type=str, help="eircode to search for, overides address-substr-csv"
+    # )
+
+    args = parser.parse_args()
+
+    print_listing_sales(args)
+    print_listing_shares(args)
+    print_listing_rentals(args)
+
+    print_rtb_tribunals(args)
+    print_rtb_determinations(args)
+    print_rtb_registrations(args)
+
+    print_ppr(args)
+
+
+if __name__ == "__main__":
+    main()
