@@ -11,11 +11,7 @@ from math import radians, sin, cos, asin, sqrt, isnan
 import numpy as np
 
 from irish_property_analysis.settings import LISTINGS_DATA_LOCATION, BAD_MERGE_ATTRS
-from irish_property_analysis.constants import (
-    PPR_URL,
-    TRICKY_STR_TABLE,
-    EARTH_RADIUS
-)
+from irish_property_analysis.constants import PPR_URL, TRICKY_STR_TABLE, EARTH_RADIUS
 
 
 def remove_duplicates(data, subset_fields=None):
@@ -127,25 +123,25 @@ def is_sale_date_within_range(base_date: str | datetime, cmp_date: str | datetim
 
 
 def get_all_historical_listings() -> list:
-    print('Getting Historical Listings')
+    print("Getting Historical Listings")
     data = read_json(os.path.join(LISTINGS_DATA_LOCATION, "allHistoricalListings.json"))
-    print('Got Historical Listings')
+    print("Got Historical Listings")
     return data
 
 
 def get_shares() -> list:
-    print('Getting Shares')
+    print("Getting Shares")
     data = read_json(os.path.join(LISTINGS_DATA_LOCATION, "shares.json"))
     for d in data:
         d.pop("beds", None)
-    print('Got Shares')
+    print("Got Shares")
     return data
 
 
 def get_rentals() -> list:
-    print('Getting Rentals')
+    print("Getting Rentals")
     data = read_json(os.path.join(LISTINGS_DATA_LOCATION, "rentals.json"))
-    print('Got Rentals')
+    print("Got Rentals")
     return data
 
 
@@ -184,7 +180,7 @@ def haversine_vectorized(lat1, lon1, lat2, lon2, radius_km=1):
     dlat = lat2 - lat1
     dlon = lon2 - lon1
 
-    a = np.sin(dlat / 2.0)**2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2.0)**2
+    a = np.sin(dlat / 2.0) ** 2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2.0) ** 2
     c = 2 * np.arcsin(np.sqrt(a))
 
     return (radius_km * c) * EARTH_RADIUS

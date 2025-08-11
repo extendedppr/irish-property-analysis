@@ -125,18 +125,22 @@ def serialise_listing_for_print(listing: dict) -> dict:
 
 
 def add_school_score(listing_data):
-    if listing_data['lat'] and listing_data['lng']:
-        listing_data['school_score'] = schools.get_score(listing_data['lat'], listing_data['lng'])
+    if listing_data["lat"] and listing_data["lng"]:
+        listing_data["school_score"] = schools.get_score(
+            listing_data["lat"], listing_data["lng"]
+        )
     else:
-        listing_data['school_score'] = 0
+        listing_data["school_score"] = 0
     return listing_data
 
 
 def add_bus_stop_score(listing_data):
-    if listing_data['lat'] and listing_data['lng']:
-        listing_data['bus_stop_score'] = bus_stops.get_score(listing_data['lat'], listing_data['lng'])
+    if listing_data["lat"] and listing_data["lng"]:
+        listing_data["bus_stop_score"] = bus_stops.get_score(
+            listing_data["lat"], listing_data["lng"]
+        )
     else:
-        listing_data['bus_stop_score'] = 0
+        listing_data["bus_stop_score"] = 0
     return listing_data
 
 
@@ -212,15 +216,11 @@ def print_rtb_registrations(args):
     print_data = []
     for item in register_results:
         temp_item = item.__data__
-        temp_item.pop('id')
+        temp_item.pop("id")
         print_data.append(temp_item)
 
     print("\nRTB register results:")
-    print(
-        for_print_tabulate(
-            [d for d in print_data], truncate=not args.all
-        )
-    )
+    print(for_print_tabulate([d for d in print_data], truncate=not args.all))
 
 
 def print_rtb_determinations(args):
@@ -249,19 +249,14 @@ def print_rtb_determinations(args):
             and determination_item not in determination_results
         ):
             dp = determination_item.__data__
-            dp.pop('id')
+            dp.pop("id")
             determination_results.append(dp)
 
     print("\nRTB determination results:")
-    print(
-        for_print_tabulate(
-            [d for d in determination_results], truncate=not args.all
-        )
-    )
+    print(for_print_tabulate([d for d in determination_results], truncate=not args.all))
 
 
 def print_rtb_tribunals(args):
-
     tribunal_accum = []
 
     for address_substr in args.address_substr_csv:
@@ -283,19 +278,14 @@ def print_rtb_tribunals(args):
     print_data = []
     for item in tribunal_results:
         temp_item = item.__data__
-        temp_item.pop('id')
+        temp_item.pop("id")
         print_data.append(temp_item)
 
     print("\nRTB tribunal results:")
-    print(
-        for_print_tabulate(
-            [d for d in print_data], truncate=not args.all
-        )
-    )
+    print(for_print_tabulate([d for d in print_data], truncate=not args.all))
 
 
 def main():
-
     parser = argparse.ArgumentParser(
         description="Get all available details about an address"
     )

@@ -6,9 +6,7 @@ from irish_property_analysis.ppr_sale import Sale, Sales
 
 
 class PPRSalesTest(TestCase):
-
     def setUp(self):
-
         self.sales = Sales()
 
         self.sales.append(
@@ -79,7 +77,6 @@ class PPRSalesTest(TestCase):
 
 
 class PPRSaleTest(TestCase):
-
     def test_init(self):
         self.assertEqual(
             Sale(

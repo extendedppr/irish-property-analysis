@@ -1,6 +1,3 @@
-import argparse
-
-from irish_property_analysis.settings import BAD_MERGE_ATTRS, MERGE_ATTRS
 from irish_property_analysis.ppr_sale import Sales
 from irish_property_analysis.utils import download_ppr_zip, extract_ppr_zip
 from irish_property_analysis.settings import PPR_LOCATION
