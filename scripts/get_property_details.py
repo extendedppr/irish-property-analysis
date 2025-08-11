@@ -18,6 +18,8 @@ from irish_property_analysis.utils import (
     none_to_str,
 )
 from irish_property_analysis.ppr_sale import Sales
+from irish_property_analysis.schools import schools
+from irish_property_analysis.bus_stops import bus_stops
 
 
 def for_print_tabulate(objects, truncate=False):
@@ -122,6 +124,22 @@ def serialise_listing_for_print(listing: dict) -> dict:
     return listing
 
 
+def add_school_score(listing_data):
+    if listing_data['lat'] and listing_data['lng']:
+        listing_data['school_score'] = schools.get_score(listing_data['lat'], listing_data['lng'])
+    else:
+        listing_data['school_score'] = 0
+    return listing_data
+
+
+def add_bus_stop_score(listing_data):
+    if listing_data['lat'] and listing_data['lng']:
+        listing_data['bus_stop_score'] = bus_stops.get_score(listing_data['lat'], listing_data['lng'])
+    else:
+        listing_data['bus_stop_score'] = 0
+    return listing_data
+
+
 def print_listing_sales(args):
     objects = []
 
@@ -131,6 +149,8 @@ def print_listing_sales(args):
         if listing_data in objects:
             continue
         if passes_listing_filter(args, listing):
+            listing_data = add_school_score(listing_data)
+            listing_data = add_bus_stop_score(listing_data)
             objects.append(listing_data)
 
     print(for_print_tabulate(objects, truncate=not args.all))
@@ -145,6 +165,8 @@ def print_listing_shares(args):
         if listing_data in objects:
             continue
         if passes_listing_filter(args, listing):
+            listing_data = add_school_score(listing_data)
+            listing_data = add_bus_stop_score(listing_data)
             objects.append(listing_data)
 
     print(for_print_tabulate(objects, truncate=not args.all))
@@ -159,6 +181,8 @@ def print_listing_rentals(args):
         if listing_data in objects:
             continue
         if passes_listing_filter(args, listing):
+            listing_data = add_school_score(listing_data)
+            listing_data = add_bus_stop_score(listing_data)
             objects.append(listing_data)
 
     print(for_print_tabulate(objects, truncate=not args.all))
@@ -185,10 +209,16 @@ def print_rtb_registrations(args):
             else:
                 register_results.append(register_item)
 
+    print_data = []
+    for item in register_results:
+        temp_item = item.__data__
+        temp_item.pop('id')
+        print_data.append(temp_item)
+
     print("\nRTB register results:")
     print(
         for_print_tabulate(
-            [d.__data__ for d in register_results], truncate=not args.all
+            [d for d in print_data], truncate=not args.all
         )
     )
 
@@ -218,12 +248,14 @@ def print_rtb_determinations(args):
             )
             and determination_item not in determination_results
         ):
-            determination_results.append(determination_item)
+            dp = determination_item.__data__
+            dp.pop('id')
+            determination_results.append(dp)
 
     print("\nRTB determination results:")
     print(
         for_print_tabulate(
-            [d.__data__ for d in determination_results], truncate=not args.all
+            [d for d in determination_results], truncate=not args.all
         )
     )
 
@@ -248,10 +280,16 @@ def print_rtb_tribunals(args):
             ]:
                 tribunal_results.append(tribunal_item)
 
+    print_data = []
+    for item in tribunal_results:
+        temp_item = item.__data__
+        temp_item.pop('id')
+        print_data.append(temp_item)
+
     print("\nRTB tribunal results:")
     print(
         for_print_tabulate(
-            [d.__data__ for d in tribunal_results], truncate=not args.all
+            [d for d in print_data], truncate=not args.all
         )
     )
 

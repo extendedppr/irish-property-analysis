@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "irish-property-analysis"
-version = "0.0.1"
+version = "0.0.2"
 description = ""
 authors = ["ExtendedPPR <extendedppr@gmail.com>"]
 readme = "README.md"
@@ -12,7 +12,9 @@ requests = "2.32.3"
 progressbar2 = "4.5.0"
 ujson = "5.10.0"
 tabulate = "0.9.0"
+pandas = "*"
 rtb-scraper = { git = "https://github.com/extendedppr/rtb-scraper.git", branch = "main" }
+openpyxl = "*"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^8.4.0"
@@ -24,4 +26,6 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.scripts]
 download_listings = "scripts.download_listings:main"
 download_ppr = "scripts.download_ppr:main"
+download_school_data = "scripts.download_school_data:main"
+download_bus_data = "scripts.download_bus_data:main"
 get_property_details = "scripts.get_property_details:main"

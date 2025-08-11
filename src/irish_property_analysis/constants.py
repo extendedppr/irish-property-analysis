@@ -32,3 +32,6 @@ TRICKY_STR_TABLE = str.maketrans(
         "³": "",
     }
 )
+
+
+EARTH_RADIUS = 6371.0

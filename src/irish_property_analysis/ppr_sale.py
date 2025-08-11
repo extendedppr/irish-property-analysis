@@ -81,11 +81,13 @@ class Sales:
 
     @staticmethod
     def load(filepath):
+        print('Getting PPR Data')
         sales = Sales()
 
         for sales_dict in read_csv_to_dict(filepath, headers=PPR_REPLACEMENT_HEADERS):
             sales.append(Sale.parse(sales_dict))
 
+        print('Got PPR Data')
         return sales
 
 

@@ -1,4 +1,3 @@
-import math
 import csv
 import os
 import ujson
@@ -7,12 +6,15 @@ import zipfile
 import shutil
 from datetime import datetime
 from functools import lru_cache
+from math import radians, sin, cos, asin, sqrt, isnan
+
+import numpy as np
 
 from irish_property_analysis.settings import LISTINGS_DATA_LOCATION, BAD_MERGE_ATTRS
 from irish_property_analysis.constants import (
     PPR_URL,
-    PPR_REPLACEMENT_HEADERS,
     TRICKY_STR_TABLE,
+    EARTH_RADIUS
 )
 
 
@@ -115,7 +117,7 @@ def convert_date(date_str):
 
 
 def is_nan(value):
-    return value is None or (isinstance(value, (float, int)) and math.isnan(value))
+    return value is None or (isinstance(value, (float, int)) and isnan(value))
 
 
 def is_sale_date_within_range(base_date: str | datetime, cmp_date: str | datetime):
@@ -125,18 +127,26 @@ def is_sale_date_within_range(base_date: str | datetime, cmp_date: str | datetim
 
 
 def get_all_historical_listings() -> list:
-    return read_json(os.path.join(LISTINGS_DATA_LOCATION, "allHistoricalListings.json"))
+    print('Getting Historical Listings')
+    data = read_json(os.path.join(LISTINGS_DATA_LOCATION, "allHistoricalListings.json"))
+    print('Got Historical Listings')
+    return data
 
 
 def get_shares() -> list:
+    print('Getting Shares')
     data = read_json(os.path.join(LISTINGS_DATA_LOCATION, "shares.json"))
     for d in data:
         d.pop("beds", None)
+    print('Got Shares')
     return data
 
 
 def get_rentals() -> list:
-    return read_json(os.path.join(LISTINGS_DATA_LOCATION, "rentals.json"))
+    print('Getting Rentals')
+    data = read_json(os.path.join(LISTINGS_DATA_LOCATION, "rentals.json"))
+    print('Got Rentals')
+    return data
 
 
 def download_ppr_zip(filename):
@@ -166,3 +176,15 @@ def minimize_str(string, length=50):
 
 def none_to_str(string):
     return "" if not string else string
+
+
+def haversine_vectorized(lat1, lon1, lat2, lon2, radius_km=1):
+    lat1, lon1, lat2, lon2 = map(np.radians, [lat1, lon1, lat2, lon2])
+
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+
+    a = np.sin(dlat / 2.0)**2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2.0)**2
+    c = 2 * np.arcsin(np.sqrt(a))
+
+    return (radius_km * c) * EARTH_RADIUS

@@ -18,8 +18,17 @@ poetry install
 
 ## Historical Listing Data
 
-Run `poetry run download_listings`
+```bash
+poetry run download_listings
+```
 
+## Supplementary Listing Data
+
+```bash
+poetry run download_ppr
+poetry run download_school_data
+poetry run download_bus_data
+```
 
 ## RTB data
 

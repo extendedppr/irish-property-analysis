@@ -15,7 +15,16 @@ LISTINGS_DATA_LOCATION = (
 
 PPR_LOCATION = os.path.join(LISTINGS_DATA_LOCATION, "ppr.csv")
 
+SCHOOLS_DIR_LOCATION = os.path.join(LISTINGS_DATA_LOCATION, "schools")
+PRIMARY_SCHOOLS_DATA_LOCATION = os.path.join(SCHOOLS_DIR_LOCATION, "primary.csv")
+SECONDARY_SCHOOLS_DATA_LOCATION = os.path.join(SCHOOLS_DIR_LOCATION, "secondary.csv")
+
+BUS_STOP_DIR_LOCATION = os.path.join(LISTINGS_DATA_LOCATION, "bus_stops")
+BUS_STOP_DATA_LOCATION = os.path.join(BUS_STOP_DIR_LOCATION, "bus_stops.csv")
+
 os.makedirs(LISTINGS_DATA_LOCATION, exist_ok=True)
+os.makedirs(SCHOOLS_DIR_LOCATION, exist_ok=True)
+os.makedirs(BUS_STOP_DIR_LOCATION, exist_ok=True)
 
 # Attributes that if they are different on a listing merge attempt we should see at the properties not being mergable
 BAD_MERGE_ATTRS = [
