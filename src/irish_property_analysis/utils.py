@@ -174,7 +174,7 @@ def none_to_str(string):
     return "" if not string else string
 
 
-def haversine_vectorized(lat1, lon1, lat2, lon2, radius_km=1):
+def haversine_vectorized(lat1, lon1, lat2, lon2):
     lat1, lon1, lat2, lon2 = map(np.radians, [lat1, lon1, lat2, lon2])
 
     dlat = lat2 - lat1
@@ -183,4 +183,4 @@ def haversine_vectorized(lat1, lon1, lat2, lon2, radius_km=1):
     a = np.sin(dlat / 2.0) ** 2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2.0) ** 2
     c = 2 * np.arcsin(np.sqrt(a))
 
-    return (radius_km * c) * EARTH_RADIUS
+    return c * EARTH_RADIUS

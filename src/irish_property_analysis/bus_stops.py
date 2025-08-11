@@ -11,11 +11,7 @@ class BusStops:
 
     def get_near(self, lat, lng, radius_km=1):
         distances = haversine_vectorized(
-            lat,
-            lng,
-            self.data["Latitude"].values,
-            self.data["Longitude"].values,
-            radius_km=radius_km,
+            lat, lng, self.data["Latitude"].values, self.data["Longitude"].values
         )
 
         mask = distances <= radius_km

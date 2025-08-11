@@ -34,7 +34,6 @@ class Schools:
                 lng,
                 data["School Latitude"].values,
                 data["School Longitude"].values,
-                radius_km=radius_km,
             )
 
             mask = distances <= radius_km
