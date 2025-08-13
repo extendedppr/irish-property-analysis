@@ -94,8 +94,8 @@ class PPRSaleTest(TestCase):
                 "address": "123 something something street",
                 "county": "dublin",
                 "date": datetime.datetime(2010, 1, 1, 0, 0),
-                "description_of_property": "Second-Hand Dwelling house /Apartment",
-                "description_of_property_size": "greater than or equal to 38 sq metres and less than 125 sq metres",
+                "description_of_property": "second_hand",
+                "description_of_property_size": ">38sm <125sqm",
                 "eircode": "D02X285",
                 "eircode_routing_key": "d02",
                 "eircode_unique_id": "x285",
@@ -142,8 +142,8 @@ class PPRSaleTest(TestCase):
                     "price": "123,456",
                     "not_full_market_price": "No",
                     "vat_exclusive": "No",
-                    "description_of_property": "Second-Hand Dwelling house /Apartment",
-                    "description_of_property_size": "greater than or equal to 38 sq metres and less than 125 sq metres",
+                    "description_of_property": "second_hand",
+                    "description_of_property_size": ">38sm <125sqm",
                 }
             ).hash,
             Sale(

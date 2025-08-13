@@ -184,3 +184,9 @@ def haversine_vectorized(lat1, lon1, lat2, lon2):
     c = 2 * np.arcsin(np.sqrt(a))
 
     return c * EARTH_RADIUS
+
+
+def fast_to_dict_records(df):
+    data = df.values.tolist()
+    columns = df.columns.tolist()
+    return [dict(zip(columns, d)) for d in data]

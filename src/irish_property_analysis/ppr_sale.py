@@ -104,6 +104,12 @@ class Sale:
 
         self.description_of_property_size = kwargs["description_of_property_size"]
 
+        self.description_of_property_size = {
+            "greater than or equal to 38 sq metres and less than 125 sq metres": ">38sm <125sqm",
+            "greater than 125 sq metres": ">125sqm",
+            "less than 38 sq metres": "<38sqm",
+        }.get(self.description_of_property_size)
+
         # FIXME: Below is drek. Normalize to clean strings / do better
 
         self.eircode = None
@@ -132,6 +138,12 @@ class Sale:
             "New Dwelling house /",
         ]:
             self.description_of_property = None
+
+        self.description_of_property = {
+            "Second-Hand Dwelling house /Apartment": "second_hand",
+            "New Dwelling house /Apartment": "new",
+            "New Dwelling house /": "new",
+        }.get(self.description_of_property)
 
     @staticmethod
     def parse(data):

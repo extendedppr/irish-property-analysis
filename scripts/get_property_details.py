@@ -1,6 +1,7 @@
 # TODO: at some point min / max (date, bed, bath, price)
 
 import argparse
+from datetime import datetime
 
 from tabulate import tabulate
 
@@ -33,6 +34,10 @@ def for_print_tabulate(objects, truncate=False):
         if all(not obj.get(key) for obj in objects):
             keys_to_remove.append(key)
 
+    # Comes from rtb db
+    for obj in objects:
+        obj.pop("searchable_address", None)
+
     if keys_to_remove:
         print(f"Removing keys: {keys_to_remove} as they are all empty")
 
@@ -44,6 +49,34 @@ def for_print_tabulate(objects, truncate=False):
     for obj in filtered_objects:
         if "price" in obj:
             obj["price"] = f"{obj['price']:,.0f}"
+
+    if truncate:
+        for obj in filtered_objects:
+            if obj.get("lat"):
+                obj["lat"] = round(obj["lat"], 4)
+            if obj.get("lng"):
+                obj["lng"] = round(obj["lng"], 4)
+
+    if truncate:
+        for obj in filtered_objects:
+            for k, v in obj.items():
+                if isinstance(v, datetime):
+                    obj[k] = v.date()
+                    continue
+
+                if not isinstance(v, str):
+                    continue
+
+                timestamp = None
+                for fmt in ["%Y-%m-%d %H:%M:%S.%f", "%Y-%m-%d %H:%M:%S"]:
+                    try:
+                        timestamp = datetime.strptime(v, fmt)
+                        break
+                    except ValueError:
+                        continue
+
+                if timestamp:
+                    obj[k] = timestamp.date()
 
     return tabulate(
         [
@@ -79,6 +112,7 @@ def print_ppr(args):
         )
 
     final_ppr_results = []
+    ppr_results_by_date = {}
     for ppr_item in ppr_results:
         if all(
             [
@@ -86,9 +120,15 @@ def print_ppr(args):
                 for i in args.address_substr_csv
             ]
         ):
-            # TODO: also don't merge by date since can be sold multiple times
-            if ppr_item.address not in [d.address for d in final_ppr_results]:
+            if ppr_item.address not in ppr_results_by_date:
                 final_ppr_results.append(ppr_item)
+                ppr_results_by_date[ppr_item.address] = [ppr_item.date]
+            elif (
+                ppr_item.address in ppr_results_by_date
+                and ppr_item.date not in ppr_results_by_date[ppr_item.address]
+            ):
+                final_ppr_results.append(ppr_item)
+                ppr_results_by_date[ppr_item.address].append(ppr_item.date)
 
     print("\nPPR:")
     print(
@@ -124,20 +164,20 @@ def serialise_listing_for_print(listing: dict) -> dict:
     return listing
 
 
-def add_school_score(listing_data):
+def add_school_score(listing_data, radius_km=1):
     if listing_data["lat"] and listing_data["lng"]:
         listing_data["school_score"] = schools.get_score(
-            listing_data["lat"], listing_data["lng"]
+            listing_data["lat"], listing_data["lng"], radius_km=radius_km
         )
     else:
         listing_data["school_score"] = 0
     return listing_data
 
 
-def add_bus_stop_score(listing_data):
+def add_bus_stop_score(listing_data, radius_km=1):
     if listing_data["lat"] and listing_data["lng"]:
         listing_data["bus_stop_score"] = bus_stops.get_score(
-            listing_data["lat"], listing_data["lng"]
+            listing_data["lat"], listing_data["lng"], radius_km=radius_km
         )
     else:
         listing_data["bus_stop_score"] = 0
@@ -153,8 +193,12 @@ def print_listing_sales(args):
         if listing_data in objects:
             continue
         if passes_listing_filter(args, listing):
-            listing_data = add_school_score(listing_data)
-            listing_data = add_bus_stop_score(listing_data)
+            listing_data = add_school_score(
+                listing_data, radius_km=args.school_radius_km
+            )
+            listing_data = add_bus_stop_score(
+                listing_data, radius_km=args.bus_stop_radius_km
+            )
             objects.append(listing_data)
 
     print(for_print_tabulate(objects, truncate=not args.all))
@@ -169,8 +213,12 @@ def print_listing_shares(args):
         if listing_data in objects:
             continue
         if passes_listing_filter(args, listing):
-            listing_data = add_school_score(listing_data)
-            listing_data = add_bus_stop_score(listing_data)
+            listing_data = add_school_score(
+                listing_data, radius_km=args.school_radius_km
+            )
+            listing_data = add_bus_stop_score(
+                listing_data, radius_km=args.bus_stop_radius_km
+            )
             objects.append(listing_data)
 
     print(for_print_tabulate(objects, truncate=not args.all))
@@ -185,8 +233,12 @@ def print_listing_rentals(args):
         if listing_data in objects:
             continue
         if passes_listing_filter(args, listing):
-            listing_data = add_school_score(listing_data)
-            listing_data = add_bus_stop_score(listing_data)
+            listing_data = add_school_score(
+                listing_data, radius_km=args.school_radius_km
+            )
+            listing_data = add_bus_stop_score(
+                listing_data, radius_km=args.bus_stop_radius_km
+            )
             objects.append(listing_data)
 
     print(for_print_tabulate(objects, truncate=not args.all))
@@ -297,6 +349,18 @@ def main():
         default=[],
     )
     parser.add_argument("--county", type=str, help="County to search in")
+    parser.add_argument(
+        "--school-radius-km",
+        type=float,
+        help="How wide around a property to search for schools",
+        default=1,
+    )
+    parser.add_argument(
+        "--bus-stop-radius-km",
+        type=float,
+        help="How wide around a property to search for bus stops",
+        default=1,
+    )
     parser.add_argument(
         "--all", action="store_true", help="Don't truncate long strings"
     )

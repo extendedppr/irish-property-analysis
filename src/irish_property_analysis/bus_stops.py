@@ -1,7 +1,7 @@
 import pandas as pd
 
 from irish_property_analysis.settings import BUS_STOP_DATA_LOCATION
-from irish_property_analysis.utils import haversine_vectorized
+from irish_property_analysis.utils import haversine_vectorized, fast_to_dict_records
 
 
 class BusStops:
@@ -15,13 +15,15 @@ class BusStops:
         )
 
         mask = distances <= radius_km
-        return (
+
+        result = (
             self.data.loc[mask]
             .assign(distance_km=distances[mask])
             .sort_values(by="distance_km")
             .reset_index(drop=True)
-            .to_dict(orient="records")
         )
+
+        return fast_to_dict_records(result)
 
     def get_score(self, lat, lng, radius_km=1):
         """
@@ -29,7 +31,7 @@ class BusStops:
 
         Only gets count now but should factor in a few other things like number of routes
         """
-        return len(self.get_near(lat, lng))
+        return len(self.get_near(lat, lng, radius_km=radius_km))
 
 
 bus_stops = BusStops()
