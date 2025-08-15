@@ -190,3 +190,7 @@ def fast_to_dict_records(df):
     data = df.values.tolist()
     columns = df.columns.tolist()
     return [dict(zip(columns, d)) for d in data]
+
+
+def chunks(lst, x):
+    return [lst[i : i + x] for i in range(0, len(lst), x)]

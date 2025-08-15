@@ -21,6 +21,9 @@ from irish_property_analysis.utils import (
 from irish_property_analysis.ppr_sale import Sales
 from irish_property_analysis.schools import schools
 from irish_property_analysis.bus_stops import bus_stops
+from irish_property_analysis.sales import sale_db
+from irish_property_analysis.rentals import rental_db
+from irish_property_analysis.shares import share_db
 
 
 def for_print_tabulate(objects, truncate=False):
@@ -188,18 +191,15 @@ def print_listing_sales(args):
     objects = []
 
     print("\nHistorical listing sales:")
-    for listing in get_all_historical_listings():
-        listing_data = serialise_listing_for_print(listing)
-        if listing_data in objects:
-            continue
-        if passes_listing_filter(args, listing):
-            listing_data = add_school_score(
-                listing_data, radius_km=args.school_radius_km
-            )
-            listing_data = add_bus_stop_score(
-                listing_data, radius_km=args.bus_stop_radius_km
-            )
-            objects.append(listing_data)
+    for sale_obj in sale_db.filter(
+        address_substrs=args.address_substr_csv, county=args.county, partial=True
+    ):
+        sale_dict = sale_obj.serialise()
+
+        sale_dict = add_school_score(sale_dict, radius_km=args.school_radius_km)
+        sale_dict = add_bus_stop_score(sale_dict, radius_km=args.bus_stop_radius_km)
+        sale_dict.pop("clean_address")
+        objects.append(sale_dict)
 
     print(for_print_tabulate(objects, truncate=not args.all))
 
@@ -208,18 +208,15 @@ def print_listing_shares(args):
     objects = []
 
     print("\nHistorical listing shares:")
-    for listing in get_shares():
-        listing_data = serialise_listing_for_print(listing)
-        if listing_data in objects:
-            continue
-        if passes_listing_filter(args, listing):
-            listing_data = add_school_score(
-                listing_data, radius_km=args.school_radius_km
-            )
-            listing_data = add_bus_stop_score(
-                listing_data, radius_km=args.bus_stop_radius_km
-            )
-            objects.append(listing_data)
+    for share_obj in share_db.filter(
+        address_substrs=args.address_substr_csv, county=args.county, partial=True
+    ):
+        share_dict = share_obj.serialise()
+
+        share_dict = add_school_score(share_dict, radius_km=args.school_radius_km)
+        share_dict = add_bus_stop_score(share_dict, radius_km=args.bus_stop_radius_km)
+        share_dict.pop("clean_address")
+        objects.append(share_dict)
 
     print(for_print_tabulate(objects, truncate=not args.all))
 
@@ -228,18 +225,15 @@ def print_listing_rentals(args):
     objects = []
 
     print("\nHistorical listing rentals:")
-    for listing in get_rentals():
-        listing_data = serialise_listing_for_print(listing)
-        if listing_data in objects:
-            continue
-        if passes_listing_filter(args, listing):
-            listing_data = add_school_score(
-                listing_data, radius_km=args.school_radius_km
-            )
-            listing_data = add_bus_stop_score(
-                listing_data, radius_km=args.bus_stop_radius_km
-            )
-            objects.append(listing_data)
+    for rental_obj in rental_db.filter(
+        address_substrs=args.address_substr_csv, county=args.county, partial=True
+    ):
+        rental_dict = rental_obj.serialise()
+
+        rental_dict = add_school_score(rental_dict, radius_km=args.school_radius_km)
+        rental_dict = add_bus_stop_score(rental_dict, radius_km=args.bus_stop_radius_km)
+        rental_dict.pop("clean_address")
+        objects.append(rental_dict)
 
     print(for_print_tabulate(objects, truncate=not args.all))
 

@@ -1318,7 +1318,7 @@ jupyter = ["ipywidgets (>=7.5.1,<9)"]
 
 [[package]]
 name = "rtb-scraper"
-version = "0.0.4"
+version = "0.0.7"
 description = "Scrape RTB disputes and properties"
 optional = false
 python-versions = ">=3.9,<3.12"
@@ -1340,7 +1340,7 @@ requests = "2.32.3"
 type = "git"
 url = "https://github.com/extendedppr/rtb-scraper.git"
 reference = "main"
-resolved_reference = "4af306739d7b831a1585b2ceb0def95cc9a87967"
+resolved_reference = "da71ea09692f003bfd752365f00d1387e1feef76"
 
 [[package]]
 name = "six"
