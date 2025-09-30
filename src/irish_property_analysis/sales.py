@@ -1,4 +1,4 @@
-from typing import Iterable, List, Optional, Union
+from typing import Iterable, List
 
 from peewee import (
     Model,
@@ -7,8 +7,6 @@ from peewee import (
     IntegerField,
     DateTimeField,
     SqliteDatabase,
-    fn,
-    SQL,
 )
 
 from irish_property_analysis.settings import LISTING_DB_LOCATION
@@ -89,6 +87,7 @@ class SaleDB:
     def filter(
         self,
         address_substrs=None,
+        exclude_address_substrs=None,
         address=None,
         county=None,
         clean_agent=None,
@@ -137,6 +136,21 @@ class SaleDB:
                     )
                 else:
                     query = query.where(SaleObject.searchable_address == address_substr)
+
+        if exclude_address_substrs:
+            for exclude_address_substr in exclude_address_substrs:
+                if partial:
+                    query = query.where(
+                        ~(
+                            SaleObject.searchable_address.contains(
+                                exclude_address_substr
+                            )
+                        )
+                    )
+                else:
+                    query = query.where(
+                        ~(SaleObject.searchable_address == exclude_address_substr)
+                    )
 
         return [obj for obj in query]
 
