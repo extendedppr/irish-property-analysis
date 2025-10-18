@@ -13,42 +13,43 @@ class Schools:
         self.primary = pd.read_csv(PRIMARY_SCHOOLS_DATA_LOCATION)
         self.secondary = pd.read_csv(SECONDARY_SCHOOLS_DATA_LOCATION)
 
+        # Headers are a row down
+        self.secondary.columns = self.secondary.iloc[0]
+        self.secondary = self.secondary.drop(index=0)
+        self.secondary = self.secondary.reset_index(drop=True)
+
+        self.secondary["School Latitude"] = pd.to_numeric(
+            self.secondary["School Latitude"], errors="coerce"
+        )
+        self.secondary["School Longitude"] = pd.to_numeric(
+            self.secondary["School Longitude"], errors="coerce"
+        )
+
+        secondary_coords = self.secondary[["School Latitude", "School Longitude"]]
+        primary_coords = self.primary[["School Latitude", "School Longitude"]]
+
+        self.coords_df = pd.concat(
+            [secondary_coords, primary_coords], ignore_index=True
+        )
+
     def get_near(self, lat, lng, radius_km=1):
-        final_data = []
+        distances = haversine_vectorized(
+            lat,
+            lng,
+            self.coords_df["School Latitude"].values,
+            self.coords_df["School Longitude"].values,
+        )
 
-        for idx, data in enumerate([self.primary, self.secondary]):
-            if idx == 1:
-                # Headers are a row down
-                data.columns = data.iloc[0]
-                data = data.drop(index=0)
-                data = data.reset_index(drop=True)
+        mask = distances <= radius_km
 
-                data["School Latitude"] = pd.to_numeric(
-                    data["School Latitude"], errors="coerce"
-                )
-                data["School Longitude"] = pd.to_numeric(
-                    data["School Longitude"], errors="coerce"
-                )
+        result = (
+            self.coords_df.loc[mask]
+            .assign(distance_km=distances[mask])
+            .sort_values(by="distance_km")
+            .reset_index(drop=True)
+        )
 
-            distances = haversine_vectorized(
-                lat,
-                lng,
-                data["School Latitude"].values,
-                data["School Longitude"].values,
-            )
-
-            mask = distances <= radius_km
-
-            result = (
-                data.loc[mask]
-                .assign(distance_km=distances[mask])
-                .sort_values(by="distance_km")
-                .reset_index(drop=True)
-            )
-
-            final_data.extend(fast_to_dict_records(result))
-
-        return final_data
+        return fast_to_dict_records(result)
 
     def get_score(self, lat, lng, radius_km=1):
         """
