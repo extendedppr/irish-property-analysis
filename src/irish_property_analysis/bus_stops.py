@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pandas as pd
 
 from irish_property_analysis.settings import BUS_STOP_DATA_LOCATION
@@ -8,16 +10,25 @@ class BusStops:
     def __init__(self):
         print("Loading Bus Stop Data")
         self.data = pd.read_csv(BUS_STOP_DATA_LOCATION)
+        self.data["creation_date"] = self.data["CreationDateTime"].apply(
+            lambda x: datetime.strptime(x, "%Y-%m-%dT%H:%M:%S.%f")
+        )
 
-    def get_near(self, lat, lng, radius_km=1):
+    def get_near(self, lat, lng, radius_km=1, before=None):
+        data = None
+        if before:
+            data = self.data[self.data["creation_date"] <= before]
+        else:
+            data = self.data
+
         distances = haversine_vectorized(
-            lat, lng, self.data["Latitude"].values, self.data["Longitude"].values
+            lat, lng, data["Latitude"].values, data["Longitude"].values
         )
 
         mask = distances <= radius_km
 
         result = (
-            self.data.loc[mask]
+            data.loc[mask]
             .assign(distance_km=distances[mask])
             .sort_values(by="distance_km")
             .reset_index(drop=True)
