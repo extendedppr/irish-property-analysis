@@ -18,8 +18,8 @@ LISTINGS_DATA_OPTIONS = {
     "all_rentals": "rentals",
     "all_sales": "allHistoricalListings",
     # NOTE: Below not used yet
-    #"ppr_price": "PPRPrice",
-    #"matched_with_ppr": "matchedWithPPR",
+    # "ppr_price": "PPRPrice",
+    # "matched_with_ppr": "matchedWithPPR",
 }
 
 TRICKY_STR_TABLE = str.maketrans(

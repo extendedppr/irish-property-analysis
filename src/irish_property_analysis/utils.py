@@ -6,7 +6,7 @@ import zipfile
 import shutil
 from datetime import datetime
 from functools import lru_cache
-from math import radians, sin, cos, asin, sqrt, isnan
+from math import isnan
 
 import numpy as np
 

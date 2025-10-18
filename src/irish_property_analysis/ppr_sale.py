@@ -21,7 +21,7 @@ class Sales:
         return len(self._data)
 
     def append(self, sale):
-        if not sale in self:
+        if sale not in self:
             self._data.append(sale)
             self._hashes.add(sale.hash)
 
