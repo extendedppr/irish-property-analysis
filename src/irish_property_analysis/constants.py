@@ -3,8 +3,8 @@ PPR_URL = "https://www.propertypriceregister.ie/website/npsra/ppr/npsra-ppr.nsf/
 PPR_REPLACEMENT_HEADERS = [
     "date",
     "address",
-    "eircode",
     "county",
+    "eircode",
     "price",
     "not_full_market_price",
     "vat_exclusive",
