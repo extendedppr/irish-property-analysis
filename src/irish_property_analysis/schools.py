@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 
 from irish_property_analysis.settings import (
@@ -9,6 +11,12 @@ from irish_property_analysis.utils import haversine_vectorized, fast_to_dict_rec
 
 class Schools:
     def __init__(self):
+        if not os.path.exists(PRIMARY_SCHOOLS_DATA_LOCATION) or not os.path.exists(
+            SECONDARY_SCHOOLS_DATA_LOCATION
+        ):
+            print("School data not downloaded")
+            return
+
         print("Loading School Data")
         self.primary = pd.read_csv(PRIMARY_SCHOOLS_DATA_LOCATION)
         self.secondary = pd.read_csv(SECONDARY_SCHOOLS_DATA_LOCATION)
@@ -33,6 +41,9 @@ class Schools:
         )
 
     def get_near(self, lat, lng, radius_km=1):
+        if not hasattr(self, "primary"):
+            return None
+
         distances = haversine_vectorized(
             lat,
             lng,
@@ -57,6 +68,8 @@ class Schools:
 
         Only gets count now but should factor in a few other things like number of routes
         """
+        if not hasattr(self, "primary"):
+            return None
         return len(self.get_near(lat, lng, radius_km=radius_km))
 
 

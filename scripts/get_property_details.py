@@ -11,9 +11,6 @@ from rtb_scraper.determination import determinations
 
 from irish_property_analysis.settings import PPR_LOCATION
 from irish_property_analysis.utils import (
-    get_all_historical_listings,
-    get_shares,
-    get_rentals,
     clean_address_for_comparison,
     minimize_str,
     none_to_str,
