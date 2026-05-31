@@ -97,8 +97,6 @@ class PPRSaleTest(TestCase):
                 "description_of_property": "second_hand",
                 "description_of_property_size": ">38sm <125sqm",
                 "eircode": "D02X285",
-                "eircode_routing_key": "d02",
-                "eircode_unique_id": "x285",
                 "not_full_market_price": "No",
                 "price": 123456.0,
                 "vat_exclusive": "No",
