@@ -179,8 +179,6 @@ class Sale:
             "vat_exclusive": self.vat_exclusive,
             "description_of_property": self.description_of_property,
             "description_of_property_size": self.description_of_property_size,
-            "eircode_routing_key": self.eircode_routing_key,
-            "eircode_unique_id": self.eircode_unique_id,
         }
 
     @property
