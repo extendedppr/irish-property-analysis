@@ -33,10 +33,13 @@ class Sales:
     def serialise(self):
         return [d.serialise() for d in self]
 
-    def filter(self, address=None, county=None, partial=True):
+    def filter(
+        self, address=None, county=None, partial=True, exclude_address_substrs=None
+    ):
         results = []
         lower_county = county.lower() if county else None
         address_for_comparison = clean_address_for_comparison(address)
+
         if partial:
             for sale in self:
                 if all(
@@ -48,6 +51,12 @@ class Sales:
                             else True
                         ),
                         lower_county in sale.county if county else True,
+                        not any(
+                            sub.lower() in clean_address_for_comparison(sale.address)
+                            for sub in exclude_address_substrs
+                        )
+                        if exclude_address_substrs
+                        else True,
                     ]
                 ):
                     results.append(sale)
@@ -62,6 +71,12 @@ class Sales:
                             else True
                         ),
                         lower_county == sale.county if county else True,
+                        not any(
+                            sub.lower() in clean_address_for_comparison(sale.address)
+                            for sub in exclude_address_substrs
+                        )
+                        if exclude_address_substrs
+                        else True,
                     ]
                 ):
                     results.append(sale)
