@@ -16,9 +16,9 @@ def main():
     secondary = os.path.join(schools, "secondary.csv")
 
     shutil.copy(primary, PRIMARY_SCHOOLS_DATA_LOCATION)
-    print(f'Wrote: {PRIMARY_SCHOOLS_DATA_LOCATION}')
+    print(f"Wrote: {PRIMARY_SCHOOLS_DATA_LOCATION}")
     shutil.copy(secondary, SECONDARY_SCHOOLS_DATA_LOCATION)
-    print(f'Wrote: {SECONDARY_SCHOOLS_DATA_LOCATION}')
+    print(f"Wrote: {SECONDARY_SCHOOLS_DATA_LOCATION}")
 
 
 if __name__ == "__main__":
