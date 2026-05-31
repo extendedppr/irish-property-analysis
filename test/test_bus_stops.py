@@ -41,13 +41,13 @@ class BusStopTest(TestCase):
             self.assertEqual(
                 len(
                     bus_stops.get_near(
-                        55.0334,
-                        -7.3577,
+                        55.0335753,
+                        -7.3578159,
                         radius_km=99999,
                         before=datetime.datetime(2000, 1, 1),
                     )
                 ),
-                5,
+                4,
             )
 
     def test_get_near(self):
@@ -58,11 +58,11 @@ class BusStopTest(TestCase):
             from irish_property_analysis.bus_stops import bus_stops
 
             self.assertEqual(
-                len(bus_stops.get_near(55.0334, -7.3577, radius_km=99999)), 9
+                len(bus_stops.get_near(55.0335753, -7.3578159, radius_km=99999)), 8
             )
 
             self.assertEqual(
-                len(bus_stops.get_near(55.0334, -7.3577, radius_km=0.01)), 1
+                len(bus_stops.get_near(55.0335753, -7.3578159, radius_km=0.01)), 1
             )
 
     def test_get_score(self):
@@ -73,11 +73,11 @@ class BusStopTest(TestCase):
             from irish_property_analysis.bus_stops import bus_stops
 
             self.assertEqual(
-                bus_stops.get_score(55.0334, -7.3577, radius_km=99999),
-                9,
+                bus_stops.get_score(55.0335753, -7.3578159, radius_km=99999),
+                8,
             )
 
             self.assertEqual(
-                bus_stops.get_score(55.0334, -7.3577, radius_km=0.01),
+                bus_stops.get_score(55.0335753, -7.3578159, radius_km=0.01),
                 1,
             )

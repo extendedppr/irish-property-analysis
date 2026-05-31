@@ -10,6 +10,7 @@ class BusStops:
     def __init__(self):
         print("Loading Bus Stop Data")
         self.data = pd.read_csv(BUS_STOP_DATA_LOCATION)
+        self.data = self.data[self.data["Status"] == "active"]
         self.data["creation_date"] = self.data["CreationDateTime"].apply(
             lambda x: datetime.strptime(x, "%Y-%m-%dT%H:%M:%S.%f")
         )
