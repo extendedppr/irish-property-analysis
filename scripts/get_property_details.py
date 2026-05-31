@@ -108,7 +108,10 @@ def print_ppr(args):
     for address_substr in args.address_substr_csv:
         # TODO: add feature to have a list of address substrings
         ppr_results = ppr_sales.filter(
-            address=address_substr, county=args.county, partial=True
+            address=address_substr,
+            county=args.county,
+            partial=True,
+            exclude_address_substrs=args.exclude_address_substr_csv,
         )
 
     final_ppr_results = []
@@ -189,7 +192,10 @@ def print_listing_sales(args):
 
     print("\nHistorical listing sales:")
     for sale_obj in sale_db.filter(
-        address_substrs=args.address_substr_csv, county=args.county, partial=True
+        address_substrs=args.address_substr_csv,
+        county=args.county,
+        partial=True,
+        exclude_address_substrs=args.exclude_address_substr_csv,
     ):
         sale_dict = sale_obj.serialise()
 
@@ -206,7 +212,10 @@ def print_listing_shares(args):
 
     print("\nHistorical listing shares:")
     for share_obj in share_db.filter(
-        address_substrs=args.address_substr_csv, county=args.county, partial=True
+        address_substrs=args.address_substr_csv,
+        county=args.county,
+        partial=True,
+        exclude_address_substrs=args.exclude_address_substr_csv,
     ):
         share_dict = share_obj.serialise()
 
@@ -223,7 +232,10 @@ def print_listing_rentals(args):
 
     print("\nHistorical listing rentals:")
     for rental_obj in rental_db.filter(
-        address_substrs=args.address_substr_csv, county=args.county, partial=True
+        address_substrs=args.address_substr_csv,
+        county=args.county,
+        partial=True,
+        exclude_address_substrs=args.exclude_address_substr_csv,
     ):
         rental_dict = rental_obj.serialise()
 
@@ -239,7 +251,11 @@ def print_rtb_registrations(args):
     register_accum = []
 
     for address_substr in args.address_substr_csv:
-        register_results = register.filter(address=address_substr, partial=True)
+        register_results = register.filter(
+            address=address_substr,
+            partial=True,
+            exclude_address_substrs=args.exclude_address_substr_csv,
+        )
         register_accum.extend(register_results)
 
     register_results = []
@@ -270,7 +286,6 @@ def print_rtb_determinations(args):
     determination_accum = []
 
     for address_substr in args.address_substr_csv:
-        # TODO: add feature to have a list of address substrings
         determination_accum.extend(
             determinations.filter(address=address_substr, partial=True)
         )
@@ -355,15 +370,14 @@ def main():
     parser.add_argument(
         "--all", action="store_true", help="Don't truncate long strings"
     )
+    parser.add_argument(
+        "--exclude-address-substr-csv",
+        dest="exclude_address_substr_csv",
+        type=address_substr_csv,
+        help="CSV values of address substrings that must not be within the found address (e.g. '13,dublin,grand canal')",
+        default=[],
+    )
 
-    # TODO
-    # parser.add_argument(
-    #    "--exclude-address-substr-csv",
-    #    dest="exclude_address_substr_csv",
-    #    type=address_substr_csv,
-    #    help="CSV values of address substrings that must not be within the found address (e.g. '13,dublin,grand canal')",
-    #    default=[],
-    # )
     # parser.add_argument(
     #    "--eircode", type=str, help="eircode to search for, overides address-substr-csv"
     # )
