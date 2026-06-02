@@ -46,7 +46,7 @@ class SaleObject(Model):
     def compute_searchable_address(self) -> str:
         return self.original_address.replace(" ", "").replace(",", "").lower()
 
-    def serialise(self):
+    def serialize(self):
         return {
             "original_address": self.original_address,
             "clean_address": self.clean_address,

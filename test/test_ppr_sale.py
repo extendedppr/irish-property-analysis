@@ -89,7 +89,7 @@ class PPRSaleTest(TestCase):
                 vat_exclusive="No",
                 description_of_property="Second-Hand Dwelling house /Apartment",
                 description_of_property_size="greater than or equal to 38 sq metres and less than 125 sq metres",
-            ).serialise(),
+            ).serialize(),
             {
                 "address": "123 something something street",
                 "county": "dublin",

@@ -30,8 +30,8 @@ class Sales:
             return True
         return False
 
-    def serialise(self):
-        return [d.serialise() for d in self]
+    def serialize(self):
+        return [d.serialize() for d in self]
 
     def filter(
         self, address=None, county=None, partial=True, exclude_address_substrs=None
@@ -88,7 +88,7 @@ class Sales:
         return sales_results
 
     def save(self, filepath):
-        data = self.serialise()
+        data = self.serialize()
         data_no_duplicates = remove_duplicates(
             data, subset_fields=["date", "address", "price", "county"]
         )
@@ -168,7 +168,7 @@ class Sale:
             data.pop(None, None)
         return Sale(**data)
 
-    def serialise(self):
+    def serialize(self):
         return {
             "date": self.date,
             "address": self.address,

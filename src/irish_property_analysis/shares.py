@@ -43,7 +43,10 @@ class ShareObject(Model):
     def __repr__(self) -> str:
         return f'ShareObject(original_address="{self.original_address}", clean_address="{self.clean_address}", county="{self.county}", lat="{self.lat}", lng="{self.lng}", price="{self.price}", clean_agent="{self.clean_agent}", ber="{self.ber}", eircode_routing_key="{self.eircode_routing_key}", m_squared="{self.m_squared}", constructed_date="{self.constructed_date}", beds="{self.beds}", baths="{self.baths}", property_type="{self.property_type}", published_date="{self.published_date}")'
 
-    def serialise(self):
+    def compute_searchable_address(self) -> str:
+        return self.original_address.replace(" ", "").replace(",", "").lower()
+
+    def serialize(self):
         return {
             "original_address": self.original_address,
             "clean_address": self.clean_address,
