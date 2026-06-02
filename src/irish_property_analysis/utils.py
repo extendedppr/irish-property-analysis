@@ -20,15 +20,17 @@ def remove_duplicates(data, subset_fields=None):
     """
     seen = set()
     unique_data = []
+
     for row in data:
         if subset_fields:
             key = tuple(row[field] for field in subset_fields)
         else:
-            key = row.values()
+            key = tuple(row.items())
 
         if key not in seen:
             unique_data.append(row)
             seen.add(key)
+
     return unique_data
 
 

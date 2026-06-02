@@ -11,6 +11,7 @@ from irish_property_analysis.utils import (
     convert_date,
     is_nan,
     is_sale_date_within_range,
+    remove_duplicates,
 )
 
 
@@ -52,4 +53,9 @@ class UtilsTest(TestCase):
             is_sale_date_within_range(
                 datetime.datetime(2000, 1, 1), datetime.datetime(2025, 2, 1)
             )
+        )
+
+    def test_remove_duplicates(self):
+        self.assertEqual(
+            remove_duplicates([{"a": 1}, {"a": 1}, {"a": 2}]), [{"a": 1}, {"a": 2}]
         )
