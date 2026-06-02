@@ -12,6 +12,9 @@ from irish_property_analysis.utils import (
     is_nan,
     is_sale_date_within_range,
     remove_duplicates,
+    chunks,
+    none_to_str,
+    minimize_str,
 )
 
 
@@ -22,6 +25,8 @@ class UtilsTest(TestCase):
             fh.write("[]")
         self.assertEqual(read_json(random_file), [])
         os.remove(random_file)
+        with self.assertRaises(FileNotFoundError):
+            read_json(random_file)
 
     def test_mean_data(self):
         data = [{"a": [1, 2], "b": 1}]
@@ -59,3 +64,23 @@ class UtilsTest(TestCase):
         self.assertEqual(
             remove_duplicates([{"a": 1}, {"a": 1}, {"a": 2}]), [{"a": 1}, {"a": 2}]
         )
+
+    def test_remove_duplicates_subset_fields(self):
+        self.assertEqual(
+            remove_duplicates(
+                [{"a": 1, "b": 1}, {"a": 1, "b": 2}, {"a": 2, "b": 3}],
+                subset_fields=["b"],
+            ),
+            [{"a": 1, "b": 1}, {"a": 1, "b": 2}, {"a": 2, "b": 3}],
+        )
+
+    def test_chunks(self):
+        self.assertEqual(chunks([1, 2, 3, 4, 5], 2), [[1, 2], [3, 4], [5]])
+
+    def test_none_to_str(self):
+        self.assertEqual(none_to_str("abc"), "abc")
+        self.assertEqual(none_to_str(None), "")
+
+    def test_minimize_str(self):
+        self.assertEqual(minimize_str("abc", length=10), "abc")
+        self.assertEqual(minimize_str("abcdefg", length=5), "ab...")
