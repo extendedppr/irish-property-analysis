@@ -74,7 +74,7 @@ class ShareDB:
         return ShareObject.select().count()
 
     def __iter__(self) -> Iterable[ShareObject]:
-        return ShareObject.select().iterator(chunk_size=100)
+        return ShareObject.select().iterator()
 
     def drop_data(self) -> None:
         ShareObject.delete().execute()

@@ -74,7 +74,7 @@ class SaleDB:
         return SaleObject.select().count()
 
     def __iter__(self) -> Iterable[SaleObject]:
-        return SaleObject.select().iterator(chunk_size=100)
+        return SaleObject.select().iterator()
 
     def drop_data(self) -> None:
         SaleObject.delete().execute()

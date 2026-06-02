@@ -74,7 +74,7 @@ class RentalDB:
         return RentalObject.select().count()
 
     def __iter__(self) -> Iterable[RentalObject]:
-        return RentalObject.select().iterator(chunk_size=100)
+        return RentalObject.select().iterator()
 
     def drop_data(self) -> None:
         RentalObject.delete().execute()
