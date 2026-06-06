@@ -74,13 +74,13 @@ class PPRSalesTest(TestCase):
         )
 
     def test_filter(self):
-        # TODO: partial, also better tests in general
-
         self.assertEqual(len(self.sales.filter(address="nonexist")), 0)
-        self.assertEqual(len(self.sales.filter(address="123")), 1)
+        self.assertEqual(len(self.sales.filter(address="123", partial=True)), 1)
         self.assertEqual(len(self.sales.filter(county="dublin")), 2)
         self.assertEqual(len(self.sales.filter(county="cork")), 0)
-        self.assertEqual(len(self.sales.filter(address="123", county="dublin")), 1)
+        self.assertEqual(
+            len(self.sales.filter(address="123", county="dublin", partial=True)), 1
+        )
 
     def test_contains(self):
         self.assertTrue(

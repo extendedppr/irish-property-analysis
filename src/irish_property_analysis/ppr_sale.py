@@ -34,7 +34,7 @@ class Sales:
         return [d.serialize() for d in self]
 
     def filter(
-        self, address=None, county=None, partial=True, exclude_address_substrs=None
+        self, address=None, county=None, partial=False, exclude_address_substrs=None
     ):
         results = []
         lower_county = county.lower() if county else None
