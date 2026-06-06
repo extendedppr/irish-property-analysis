@@ -15,10 +15,30 @@ from irish_property_analysis.utils import (
     chunks,
     none_to_str,
     minimize_str,
+    write_to_csv,
+    read_csv_to_dict,
 )
 
 
 class UtilsTest(TestCase):
+    def test_write_to_csv(self):
+        random_file = f"/tmp/{random.random()}"
+        write_to_csv(random_file, [{"a": 1, "b": 2}, {"a": 3, "b": 4}])
+        self.assertEqual(
+            read_csv_to_dict(random_file), [{"a": "1", "b": "2"}, {"a": "3", "b": "4"}]
+        )
+
+    def test_read_csv_to_dict(self):
+        random_file = f"/tmp/{random.random()}"
+        write_to_csv(random_file, [{"a": 1, "b": 2}, {"a": 3, "b": 4}])
+        self.assertEqual(
+            read_csv_to_dict(random_file), [{"a": "1", "b": "2"}, {"a": "3", "b": "4"}]
+        )
+        self.assertEqual(
+            read_csv_to_dict(random_file, headers=["y", "z"]),
+            [{"y": "1", "z": "2"}, {"y": "3", "z": "4"}],
+        )
+
     def test_read_json(self):
         random_file = f"/tmp/{random.random()}"
         with open(random_file, "w") as fh:
@@ -40,6 +60,10 @@ class UtilsTest(TestCase):
         self.assertEqual(
             convert_date(str(datetime.datetime(2025, 1, 1))),
             datetime.datetime(2025, 1, 1),
+        )
+        self.assertEqual(
+            convert_date("2026-01-01 00:00:00.000"),
+            datetime.datetime(2026, 1, 1),
         )
 
     def test_is_nan(self):
@@ -84,3 +108,5 @@ class UtilsTest(TestCase):
     def test_minimize_str(self):
         self.assertEqual(minimize_str("abc", length=10), "abc")
         self.assertEqual(minimize_str("abcdefg", length=5), "ab...")
+        self.assertEqual(minimize_str("abcde", length=5), "abcde")
+        self.assertEqual(minimize_str("abc  def", length=10), "abc def")
