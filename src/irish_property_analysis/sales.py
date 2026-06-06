@@ -130,12 +130,9 @@ class SaleDB:
 
         if address_substrs:
             for address_substr in address_substrs:
-                if partial:
-                    query = query.where(
-                        SaleObject.searchable_address.contains(address_substr)
-                    )
-                else:
-                    query = query.where(SaleObject.searchable_address == address_substr)
+                query = query.where(
+                    SaleObject.searchable_address.contains(address_substr)
+                )
 
         if exclude_address_substrs:
             for exclude_address_substr in exclude_address_substrs:

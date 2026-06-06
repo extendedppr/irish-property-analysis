@@ -130,14 +130,9 @@ class RentalDB:
 
         if address_substrs:
             for address_substr in address_substrs:
-                if partial:
-                    query = query.where(
-                        RentalObject.searchable_address.contains(address_substr)
-                    )
-                else:
-                    query = query.where(
-                        RentalObject.searchable_address == address_substr
-                    )
+                query = query.where(
+                    RentalObject.searchable_address.contains(address_substr)
+                )
 
         if exclude_address_substrs:
             for exclude_address_substr in exclude_address_substrs:
