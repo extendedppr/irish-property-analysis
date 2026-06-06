@@ -40,14 +40,25 @@ Visit [rtb-scraper](https://github.com/extendedppr/) and follow the scraping dat
 Run `poetry run get_property_details --county dublin --address-substr-csv 87,avenue`
 
 ```bash
-usage: get_property_details [-h] [--address-substr-csv ADDRESS_SUBSTR_CSV] [--county COUNTY] [--all ALL]
+usage: get_property_details [-h] [--address-substr-csv ADDRESS_SUBSTR_CSV] [--county COUNTY]
+                            [--school-radius-km SCHOOL_RADIUS_KM]
+                            [--bus-stop-radius-km BUS_STOP_RADIUS_KM] [--all]
+                            [--exclude-address-substr-csv EXCLUDE_ADDRESS_SUBSTR_CSV]
 
 Get all available details about an address
 
 options:
   -h, --help            show this help message and exit
   --address-substr-csv ADDRESS_SUBSTR_CSV
-                        CSV values of address substrings that must be within the found address (e.g. '13,dublin,grand canal')
+                        CSV values of address substrings that must be within the found address (e.g.
+                        '13,dublin,grand canal')
   --county COUNTY       County to search in
-  --all ALL             Don't truncate long strings
+  --school-radius-km SCHOOL_RADIUS_KM
+                        How wide around a property to search for schools
+  --bus-stop-radius-km BUS_STOP_RADIUS_KM
+                        How wide around a property to search for bus stops
+  --all                 Don't truncate long strings
+  --exclude-address-substr-csv EXCLUDE_ADDRESS_SUBSTR_CSV
+                        CSV values of address substrings that must not be within the found address
+                        (e.g. '13,dublin,grand canal')
 ```
