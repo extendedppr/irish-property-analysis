@@ -65,3 +65,9 @@ class ShareDBTest(TestCase):
         self.assertEqual(len(ShareDB().filter(address="test", partial=True)), 2)
         self.assertEqual(len(ShareDB().filter(address="1", partial=True)), 1)
         self.assertEqual(len(ShareDB().filter(address="2", partial=True)), 1)
+
+        self.assertEqual(len(ShareDB().filter(address_substrs=["test"])), 2)
+        self.assertEqual(len(ShareDB().filter(address_substrs=["bad"])), 0)
+
+        self.assertEqual(len(ShareDB().filter(exclude_address_substrs=["bad"])), 2)
+        self.assertEqual(len(ShareDB().filter(exclude_address_substrs=["2"])), 1)

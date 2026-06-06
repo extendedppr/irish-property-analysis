@@ -72,3 +72,6 @@ class SalesDBTest(TestCase):
 
         self.assertEqual(len(SaleDB().filter(address_substrs=["test"])), 2)
         self.assertEqual(len(SaleDB().filter(address_substrs=["bad"])), 0)
+
+        self.assertEqual(len(SaleDB().filter(exclude_address_substrs=["bad"])), 2)
+        self.assertEqual(len(SaleDB().filter(exclude_address_substrs=["2"])), 1)
