@@ -137,11 +137,7 @@ class ShareDB:
         if exclude_address_substrs:
             for exclude_address_substr in exclude_address_substrs:
                 query = query.where(
-                    ~(
-                        ShareObject.searchable_address.contains(
-                            exclude_address_substr
-                        )
-                    )
+                    ~(ShareObject.searchable_address.contains(exclude_address_substr))
                 )
 
         return [obj for obj in query]

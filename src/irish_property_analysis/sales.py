@@ -137,11 +137,7 @@ class SaleDB:
         if exclude_address_substrs:
             for exclude_address_substr in exclude_address_substrs:
                 query = query.where(
-                    ~(
-                        SaleObject.searchable_address.contains(
-                            exclude_address_substr
-                        )
-                    )
+                    ~(SaleObject.searchable_address.contains(exclude_address_substr))
                 )
 
         return [obj for obj in query]
