@@ -61,3 +61,7 @@ class ShareDBTest(TestCase):
 
         self.assertEqual(len(ShareDB().filter(county="dublin")), 1)
         self.assertEqual(ShareDB().filter(county="dublin")[0].county, "dublin")
+
+        self.assertEqual(len(ShareDB().filter(address="test", partial=True)), 2)
+        self.assertEqual(len(ShareDB().filter(address="1", partial=True)), 1)
+        self.assertEqual(len(ShareDB().filter(address="2", partial=True)), 1)

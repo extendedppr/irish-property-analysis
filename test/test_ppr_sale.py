@@ -1,7 +1,10 @@
+import os
+
 from unittest import TestCase
 
 import datetime
 
+from irish_property_analysis.utils import read_csv_to_dict
 from irish_property_analysis.ppr_sale import Sale, Sales
 
 
@@ -34,6 +37,40 @@ class PPRSalesTest(TestCase):
                 description_of_property="Second-Hand Dwelling house /Apartment",
                 description_of_property_size="greater than or equal to 38 sq metres and less than 125 sq metres",
             )
+        )
+
+    def test_save(self):
+        try:
+            os.remove("/tmp/test_sales_save.csv")
+        except:
+            pass
+        self.sales.save("/tmp/test_sales_save.csv")
+        self.assertEqual(
+            read_csv_to_dict("/tmp/test_sales_save.csv"),
+            [
+                {
+                    "address": "123 something something street",
+                    "county": "dublin",
+                    "date": "2010-01-01 00:00:00",
+                    "description_of_property": "second_hand",
+                    "description_of_property_size": ">38sm <125sqm",
+                    "eircode": "D02X285",
+                    "not_full_market_price": "No",
+                    "price": "123456.0",
+                    "vat_exclusive": "No",
+                },
+                {
+                    "address": "543 place street",
+                    "county": "dublin",
+                    "date": "2015-01-01 00:00:00",
+                    "description_of_property": "second_hand",
+                    "description_of_property_size": ">38sm <125sqm",
+                    "eircode": "D04X285",
+                    "not_full_market_price": "No",
+                    "price": "1234567.0",
+                    "vat_exclusive": "No",
+                },
+            ],
         )
 
     def test_filter(self):
@@ -73,6 +110,36 @@ class PPRSalesTest(TestCase):
                 description_of_property_size="greater than or equal to 38 sq metres and less than 125 sq metres",
             )
             in self.sales
+        )
+
+    def test_serialize(self):
+        print(self.sales.serialize())
+        self.assertEqual(
+            self.sales.serialize(),
+            [
+                {
+                    "date": datetime.datetime(2010, 1, 1, 0, 0),
+                    "address": "123 something something street",
+                    "eircode": "D02X285",
+                    "county": "dublin",
+                    "price": 123456.0,
+                    "not_full_market_price": "No",
+                    "vat_exclusive": "No",
+                    "description_of_property": "second_hand",
+                    "description_of_property_size": ">38sm <125sqm",
+                },
+                {
+                    "date": datetime.datetime(2015, 1, 1, 0, 0),
+                    "address": "543 place street",
+                    "eircode": "D04X285",
+                    "county": "dublin",
+                    "price": 1234567.0,
+                    "not_full_market_price": "No",
+                    "vat_exclusive": "No",
+                    "description_of_property": "second_hand",
+                    "description_of_property_size": ">38sm <125sqm",
+                },
+            ],
         )
 
 
