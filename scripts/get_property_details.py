@@ -136,7 +136,7 @@ def print_ppr(args):
     print("\nPPR:")
     print(
         for_print_tabulate(
-            [i.serialise() for i in final_ppr_results], truncate=not args.all
+            [i.serialize() for i in final_ppr_results], truncate=not args.all
         )
     )
 
@@ -158,7 +158,7 @@ def passes_listing_filter(args, listing):
     return True
 
 
-def serialise_listing_for_print(listing: dict) -> dict:
+def serialize_listing_for_print(listing: dict) -> dict:
     del listing["_id"]
     del listing["clean_address"]
     listing["lat"] = listing["location"]["coordinates"][1]
@@ -197,7 +197,7 @@ def print_listing_sales(args):
         partial=True,
         exclude_address_substrs=args.exclude_address_substr_csv,
     ):
-        sale_dict = sale_obj.serialise()
+        sale_dict = sale_obj.serialize()
 
         sale_dict = add_school_score(sale_dict, radius_km=args.school_radius_km)
         sale_dict = add_bus_stop_score(sale_dict, radius_km=args.bus_stop_radius_km)
@@ -217,7 +217,7 @@ def print_listing_shares(args):
         partial=True,
         exclude_address_substrs=args.exclude_address_substr_csv,
     ):
-        share_dict = share_obj.serialise()
+        share_dict = share_obj.serialize()
 
         share_dict = add_school_score(share_dict, radius_km=args.school_radius_km)
         share_dict = add_bus_stop_score(share_dict, radius_km=args.bus_stop_radius_km)
@@ -237,7 +237,7 @@ def print_listing_rentals(args):
         partial=True,
         exclude_address_substrs=args.exclude_address_substr_csv,
     ):
-        rental_dict = rental_obj.serialise()
+        rental_dict = rental_obj.serialize()
 
         rental_dict = add_school_score(rental_dict, radius_km=args.school_radius_km)
         rental_dict = add_bus_stop_score(rental_dict, radius_km=args.bus_stop_radius_km)
@@ -318,7 +318,6 @@ def print_rtb_tribunals(args):
     tribunal_accum = []
 
     for address_substr in args.address_substr_csv:
-        # TODO: add feature to have a list of address substrings
         tribunal_accum.extend(tribunals.filter(address=address_substr, partial=True))
 
     tribunal_results = []
