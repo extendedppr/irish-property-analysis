@@ -37,13 +37,15 @@ def remove_duplicates(data, subset_fields=None):
 def write_to_csv(filepath, data):
     if not data:
         print(f"No data to write to: {filepath}")
-        return
+        return False
 
     fieldnames = data[0].keys()
     with open(filepath, mode="w", newline="", encoding="ISO-8859-1") as file:
         writer = csv.DictWriter(file, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(data)
+
+    return True
 
 
 def read_csv_to_dict(filepath, headers=None):
