@@ -5,7 +5,11 @@ from irish_property_analysis.rentals import RentalObject, RentalDB
 
 class RentalObjectTest(TestCase):
     def setUp(self):
-        RentalDB().drop_data()
+        self.rental_db = RentalDB()
+        self.rental_db.drop_data()
+
+    def tearDown(self):
+        self.rental_db.close()
 
     def test_object_str(self):
         self.assertEqual(

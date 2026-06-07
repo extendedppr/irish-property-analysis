@@ -80,9 +80,12 @@ class RentalDB:
         RentalObject.delete().execute()
 
     def create_connection(self) -> None:
-        db = SqliteDatabase(LISTING_DB_LOCATION)
-        db.connect()
-        db.create_tables([RentalObject])
+        self.db = SqliteDatabase(LISTING_DB_LOCATION)
+        self.db.connect()
+        self.db.create_tables([RentalObject])
+
+    def close(self):
+        self.db.close()
 
     def filter(
         self,
