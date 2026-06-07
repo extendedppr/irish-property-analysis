@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "irish-property-analysis"
-version = "0.0.19"
+version = "0.0.20"
 description = ""
 authors = ["ExtendedPPR <extendedppr@gmail.com>"]
 readme = "README.md"
 packages = [{include="irish_property_analysis", from="src"}]
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.12"
+python = ">=3.10,<3.14"
 requests = "<3"
 progressbar2 = "4.5.0"
 ujson = "5.10.0"
@@ -17,8 +17,7 @@ openpyxl = "3.1.5"
 rtb-scraper = { git = "https://github.com/extendedppr/rtb-scraper.git", branch = "main" }
 
 [tool.poetry.group.test.dependencies]
-pytest = "^8.4.0"
-
+pytest = "9.0.3"
 
 [tool.poetry.group.dev.dependencies]
 pytest-cov = "^7.0.0"
