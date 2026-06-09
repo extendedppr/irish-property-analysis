@@ -65,9 +65,12 @@ def clean_address_for_comparison(address):
     if not address:
         return
 
-    # TODO: road to rd, street to st etc.
+    address = address.lower()
 
-    return address.lower()
+    address = address.replace("road", "rd")
+    # address = address.replace("street", "st")  # FIXME: st can also be saint, maybe figure this out
+
+    return address
 
 
 def clean_address(address):
