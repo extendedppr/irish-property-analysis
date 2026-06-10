@@ -192,13 +192,17 @@ def add_bus_stop_score(listing_data, radius_km=1):
 def print_listing_sales(args):
     objects = []
 
+    coordinates = None
+    if all([args.lat, args.lng]):
+        coordinates = (args.lat, args.lng)
+
     print("\nHistorical listing sales:")
     for sale_obj in sale_db.filter(
         address_substrs=args.address_substr_csv,
         county=args.county,
         partial=True,
         exclude_address_substrs=args.exclude_address_substr_csv,
-        coordinates=(args.lat, args.lng),
+        coordinates=coordinates,
         search_radius_km=args.search_radius_km,
     ):
         sale_dict = sale_obj.serialize()
@@ -214,13 +218,17 @@ def print_listing_sales(args):
 def print_listing_shares(args):
     objects = []
 
+    coordinates = None
+    if all([args.lat, args.lng]):
+        coordinates = (args.lat, args.lng)
+
     print("\nHistorical listing shares:")
     for share_obj in share_db.filter(
         address_substrs=args.address_substr_csv,
         county=args.county,
         partial=True,
         exclude_address_substrs=args.exclude_address_substr_csv,
-        coordinates=(args.lat, args.lng),
+        coordinates=coordinates,
         search_radius_km=args.search_radius_km,
     ):
         share_dict = share_obj.serialize()
@@ -236,13 +244,17 @@ def print_listing_shares(args):
 def print_listing_rentals(args):
     objects = []
 
+    coordinates = None
+    if all([args.lat, args.lng]):
+        coordinates = (args.lat, args.lng)
+
     print("\nHistorical listing rentals:")
     for rental_obj in rental_db.filter(
         address_substrs=args.address_substr_csv,
         county=args.county,
         partial=True,
         exclude_address_substrs=args.exclude_address_substr_csv,
-        coordinates=(args.lat, args.lng),
+        coordinates=coordinates,
         search_radius_km=args.search_radius_km,
     ):
         rental_dict = rental_obj.serialize()

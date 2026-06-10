@@ -147,7 +147,7 @@ class RentalDB:
                 )
 
         result = [obj for obj in query]
-        if not all(coordinates):
+        if not coordinates:
             return result
         else:
             result = [r for r in result if r.lat and r.lng]
