@@ -10,6 +10,7 @@ from peewee import (
 )
 
 from irish_property_analysis.settings import LISTING_DB_LOCATION
+from irish_property_analysis.utils import haversine_vectorized
 
 
 class ShareObject(Model):
@@ -100,6 +101,8 @@ class ShareDB:
         property_type=None,
         published_date=None,
         partial: bool = False,
+        coordinates=None,
+        search_radius_km=None,
     ) -> List[ShareObject]:
         filters = {
             "county": county if county else None,
@@ -140,7 +143,22 @@ class ShareDB:
                     ~(ShareObject.searchable_address.contains(exclude_address_substr))
                 )
 
-        return [obj for obj in query]
+        result = [obj for obj in query]
+        if not all(coordinates):
+            return result
+        else:
+            result = [r for r in result if r.lat and r.lng]
+
+            distances = haversine_vectorized(
+                coordinates[0],
+                coordinates[1],
+                [r.lat for r in result],
+                [r.lng for r in result],
+            )
+
+            mask = (distances <= search_radius_km).tolist()
+
+            return [v for v, keep in zip(result, mask) if keep]
 
 
 share_db = ShareDB()

@@ -134,6 +134,8 @@ def print_ppr(args):
                 ppr_results_by_date[ppr_item.address].append(ppr_item.date)
 
     print("\nPPR:")
+    if all([args.lat, args.lng]):
+        print("Note: lat/lng does not have an impact on this... yet")
     print(
         for_print_tabulate(
             [i.serialize() for i in final_ppr_results], truncate=not args.all
@@ -196,6 +198,8 @@ def print_listing_sales(args):
         county=args.county,
         partial=True,
         exclude_address_substrs=args.exclude_address_substr_csv,
+        coordinates=(args.lat, args.lng),
+        search_radius_km=args.search_radius_km,
     ):
         sale_dict = sale_obj.serialize()
 
@@ -216,6 +220,8 @@ def print_listing_shares(args):
         county=args.county,
         partial=True,
         exclude_address_substrs=args.exclude_address_substr_csv,
+        coordinates=(args.lat, args.lng),
+        search_radius_km=args.search_radius_km,
     ):
         share_dict = share_obj.serialize()
 
@@ -236,6 +242,8 @@ def print_listing_rentals(args):
         county=args.county,
         partial=True,
         exclude_address_substrs=args.exclude_address_substr_csv,
+        coordinates=(args.lat, args.lng),
+        search_radius_km=args.search_radius_km,
     ):
         rental_dict = rental_obj.serialize()
 
@@ -279,6 +287,8 @@ def print_rtb_registrations(args):
         print_data.append(temp_item)
 
     print("\nRTB register results:")
+    if all([args.lat, args.lng]):
+        print("Note: lat/lng does not have an impact on this... yet")
     print(for_print_tabulate([d for d in print_data], truncate=not args.all))
 
 
@@ -311,6 +321,8 @@ def print_rtb_determinations(args):
             determination_results.append(dp)
 
     print("\nRTB determination results:")
+    if all([args.lat, args.lng]):
+        print("Note: lat/lng does not have an impact on this... yet")
     print(for_print_tabulate([d for d in determination_results], truncate=not args.all))
 
 
@@ -339,6 +351,8 @@ def print_rtb_tribunals(args):
         print_data.append(temp_item)
 
     print("\nRTB tribunal results:")
+    if all([args.lat, args.lng]):
+        print("Note: lat/lng does not have an impact on this... yet")
     print(for_print_tabulate([d for d in print_data], truncate=not args.all))
 
 
@@ -376,12 +390,19 @@ def main():
         help="CSV values of address substrings that must not be within the found address (e.g. '13,dublin,grand canal')",
         default=[],
     )
+    parser.add_argument("--lat", type=float)
+    parser.add_argument("--lng", type=float)
+    parser.add_argument("--search-radius-km", type=float, default=1)
 
     # parser.add_argument(
     #    "--eircode", type=str, help="eircode to search for, overides address-substr-csv"
     # )
 
     args = parser.parse_args()
+
+    if not all([args.lat, args.lng]) and any([args.lat, args.lng]):
+        print("Must provide lat and lng")
+        return
 
     print_listing_sales(args)
     print_listing_shares(args)
