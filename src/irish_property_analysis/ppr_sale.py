@@ -9,6 +9,19 @@ from irish_property_analysis.utils import (
 from irish_property_analysis.constants import PPR_REPLACEMENT_HEADERS
 
 
+DESCRIPTION_OF_PROP_SIZE_OPTIONS = {
+    "greater than or equal to 38 sq metres and less than 125 sq metres": ">38sm <125sqm",
+    "greater than 125 sq metres": ">125sqm",
+    "less than 38 sq metres": "<38sqm",
+}
+
+DESCRIPTION_OF_PROP_OPTIONS = {
+    "Second-Hand Dwelling house /Apartment": "second_hand",
+    "New Dwelling house /Apartment": "new",
+    "New Dwelling house /": "new",
+}
+
+
 class Sales:
     def __init__(self, *args, **kwargs):
         self._data = kwargs.get("data", [])
@@ -119,11 +132,9 @@ class Sale:
 
         self.description_of_property_size = kwargs["description_of_property_size"]
 
-        self.description_of_property_size = {
-            "greater than or equal to 38 sq metres and less than 125 sq metres": ">38sm <125sqm",
-            "greater than 125 sq metres": ">125sqm",
-            "less than 38 sq metres": "<38sqm",
-        }.get(self.description_of_property_size)
+        self.description_of_property_size = DESCRIPTION_OF_PROP_SIZE_OPTIONS.get(
+            self.description_of_property_size
+        )
 
         # FIXME: Below is drek. Normalize to clean strings / do better
 
@@ -147,18 +158,12 @@ class Sale:
             .replace("Teach/?ras?n C?naithe Nua", "New Dwelling house /")
         )
 
-        if self.description_of_property not in [
-            "Second-Hand Dwelling house /Apartment",
-            "New Dwelling house /Apartment",
-            "New Dwelling house /",
-        ]:
+        if self.description_of_property not in DESCRIPTION_OF_PROP_OPTIONS.keys():
             self.description_of_property = None
 
-        self.description_of_property = {
-            "Second-Hand Dwelling house /Apartment": "second_hand",
-            "New Dwelling house /Apartment": "new",
-            "New Dwelling house /": "new",
-        }.get(self.description_of_property)
+        self.description_of_property = DESCRIPTION_OF_PROP_OPTIONS.get(
+            self.description_of_property
+        )
 
     @staticmethod
     def parse(data):
