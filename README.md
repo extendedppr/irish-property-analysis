@@ -30,9 +30,13 @@ poetry run download_school_data
 poetry run download_bus_data
 ```
 
+## PPR data
+
+Visit [ppr](https://github.com/extendedppr/ppr) and follow the scraping data steps.
+
 ## RTB data
 
-Visit [rtb-scraper](https://github.com/extendedppr/) and follow the scraping data steps.
+Visit [rtb-scraper](https://github.com/extendedppr/rtb-scraper) and follow the scraping data steps.
 
 
 # Searching Properties

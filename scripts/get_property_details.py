@@ -5,17 +5,17 @@ from datetime import datetime
 
 from tabulate import tabulate
 
+from ppr.ppr_db import PPRDB
+
 from rtb_scraper.register import register
 from rtb_scraper.tribunal import tribunals
 from rtb_scraper.determination import determinations
 
-from irish_property_analysis.settings import PPR_LOCATION
 from irish_property_analysis.utils import (
     clean_address_for_comparison,
     minimize_str,
     none_to_str,
 )
-from irish_property_analysis.ppr_sale import Sales
 from irish_property_analysis.schools import schools
 from irish_property_analysis.bus_stops import bus_stops
 from irish_property_analysis.sales import sale_db
@@ -102,45 +102,34 @@ def address_substr_csv(value: str):
 
 
 def print_ppr(args):
-    ppr_sales = Sales.load(PPR_LOCATION)
-
-    ppr_results = []
-    for address_substr in args.address_substr_csv:
-        # TODO: add feature to have a list of address substrings
-        ppr_results = ppr_sales.filter(
-            address=address_substr,
-            county=args.county,
-            partial=True,
-            exclude_address_substrs=args.exclude_address_substr_csv,
-        )
+    ppr_results = PPRDB().filter(
+        address_substrs=args.address_substr_csv,
+        exclude_address_substrs=args.exclude_address_substr_csv,
+        county=args.county,
+        partial=True,
+    )
 
     final_ppr_results = []
-    ppr_results_by_date = {}
-    for ppr_item in ppr_results:
-        if all(
-            [
-                i in clean_address_for_comparison(ppr_item.address)
-                for i in args.address_substr_csv
-            ]
-        ):
-            if ppr_item.address not in ppr_results_by_date:
-                final_ppr_results.append(ppr_item)
-                ppr_results_by_date[ppr_item.address] = [ppr_item.date]
-            elif (
-                ppr_item.address in ppr_results_by_date
-                and ppr_item.date not in ppr_results_by_date[ppr_item.address]
-            ):
-                final_ppr_results.append(ppr_item)
-                ppr_results_by_date[ppr_item.address].append(ppr_item.date)
-
     print("\nPPR:")
     if all([args.lat, args.lng]):
         print("Note: lat/lng does not have an impact on this... yet")
-    print(
-        for_print_tabulate(
-            [i.serialize() for i in final_ppr_results], truncate=not args.all
-        )
-    )
+
+    final_ppr_results = [
+        {
+            "address": result.address,
+            "county": result.county,
+            "price": result.price,
+            "date": result.date,
+            "eircode": result.eircode,
+            "not_full_market_price": result.not_full_market_price,
+            "vat_exclusive": result.vat_exclusive,
+            "description_of_property": result.description_of_property,
+            "description_of_property_size": result.description_of_property_size,
+        }
+        for result in ppr_results
+    ]
+
+    print(for_print_tabulate(final_ppr_results, truncate=not args.all))
 
 
 def passes_listing_filter(args, listing):

@@ -15,6 +15,7 @@ tabulate = "0.9.0"
 pandas = "2.3.1"
 openpyxl = "3.1.5"
 rtb-scraper = { git = "https://github.com/extendedppr/rtb-scraper.git", branch = "main" }
+ppr = { git = "https://github.com/extendedppr/ppr.git", branch = "main" }
 
 [tool.poetry.group.test.dependencies]
 pytest = "9.0.3"
@@ -28,7 +29,6 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 download_listings = "scripts.download_listings:main"
-download_ppr = "scripts.download_ppr:main"
 download_school_data = "scripts.download_school_data:main"
 download_bus_data = "scripts.download_bus_data:main"
 get_property_details = "scripts.get_property_details:main"
