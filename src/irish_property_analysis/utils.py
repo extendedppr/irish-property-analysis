@@ -1,9 +1,6 @@
 import csv
 import os
 import ujson
-import requests
-import zipfile
-import shutil
 from datetime import datetime
 from functools import lru_cache
 from math import isnan
@@ -11,7 +8,7 @@ from math import isnan
 import numpy as np
 
 from irish_property_analysis.settings import LISTINGS_DATA_LOCATION, BAD_MERGE_ATTRS
-from irish_property_analysis.constants import PPR_URL, TRICKY_STR_TABLE, EARTH_RADIUS
+from irish_property_analysis.constants import TRICKY_STR_TABLE, EARTH_RADIUS
 
 
 def remove_duplicates(data, subset_fields=None):
@@ -150,22 +147,6 @@ def get_rentals() -> list:
     data = read_json(os.path.join(LISTINGS_DATA_LOCATION, "rentals.json"))
     print("Got Rentals")
     return data
-
-
-def download_ppr_zip(filename):
-    req = requests.get(PPR_URL, verify=False)
-    with open(filename, "wb") as output_file:
-        output_file.write(req.content)
-
-
-def extract_ppr_zip(zip_location, extract_to):
-    dirpath = os.path.splitext(zip_location)[0]
-    if not os.path.exists(dirpath):
-        os.mkdir(dirpath)
-    with zipfile.ZipFile(zip_location, "r") as zip_ref:
-        zip_ref.extractall(dirpath)
-
-    shutil.copy(os.path.join(dirpath, "PPR-ALL.csv"), extract_to)
 
 
 def minimize_str(string, length=50):
