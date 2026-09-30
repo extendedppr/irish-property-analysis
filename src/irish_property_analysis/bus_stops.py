@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 import pandas as pd
@@ -8,12 +9,16 @@ from irish_property_analysis.utils import haversine_vectorized, fast_to_dict_rec
 
 class BusStops:
     def __init__(self):
-        print("Loading Bus Stop Data")
-        self.data = pd.read_csv(BUS_STOP_DATA_LOCATION)
-        self.data = self.data[self.data["Status"] == "active"]
-        self.data["creation_date"] = self.data["CreationDateTime"].apply(
-            lambda x: datetime.strptime(x, "%Y-%m-%dT%H:%M:%S.%f")
-        )
+        if os.path.exists(BUS_STOP_DATA_LOCATION):
+            print("Loading Bus Stop Data")
+            self.data = pd.read_csv(BUS_STOP_DATA_LOCATION)
+            self.data = self.data[self.data["Status"] == "active"]
+            self.data["creation_date"] = self.data["CreationDateTime"].apply(
+                lambda x: datetime.strptime(x, "%Y-%m-%dT%H:%M:%S.%f")
+            )
+        else:
+            print("Bus stop data not downloaded")
+            self.data = {}
 
     def get_near(self, lat, lng, radius_km=1, before=None):
         data = None

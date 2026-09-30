@@ -38,6 +38,10 @@ Visit [ppr](https://github.com/extendedppr/ppr) and follow the scraping data ste
 
 Visit [rtb-scraper](https://github.com/extendedppr/rtb-scraper) and follow the scraping data steps.
 
+## Planning Permission data
+
+Visit [planning-permission](https://github.com/extendedppr/planning-permission) and follow the scraping data steps.
+
 
 # Searching Properties
 

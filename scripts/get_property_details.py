@@ -11,6 +11,8 @@ from rtb_scraper.register import register
 from rtb_scraper.tribunal import tribunals
 from rtb_scraper.determination import determinations
 
+from planning_permission.utils import search as planning_permission_search
+
 from irish_property_analysis.utils import (
     clean_address_for_comparison,
     minimize_str,
@@ -357,6 +359,16 @@ def print_rtb_tribunals(args):
     print(for_print_tabulate([d for d in print_data], truncate=not args.all))
 
 
+def print_planning_permissions(args):
+    results = planning_permission_search(
+        args.address_substr_csv,
+        args.exclude_address_substr_csv,
+        counties=[args.county],
+    )
+    print("\nPlanning Permission results:")
+    print(for_print_tabulate([d for d in results], truncate=not args.all))
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Get all available details about an address"
@@ -414,6 +426,8 @@ def main():
     print_rtb_registrations(args)
 
     print_ppr(args)
+
+    print_planning_permissions(args)
 
 
 if __name__ == "__main__":
